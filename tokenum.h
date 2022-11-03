@@ -1,3 +1,12 @@
+// Online C++ compiler to run C++ program online
+/******************************************************************************
+
+Welcome to GDB Online.
+GDB online is an online compiler and debugger tool for C, C++, Python, PHP, Ruby, 
+C#, OCaml, VB, Perl, Swift, Prolog, Javascript, Pascal, HTML, CSS, JS
+Code, Compile, Run and Debug online from anywhere in world.
+
+*******************************************************************************/
 #include <iostream>
 #include <typeinfo>
 //#include <cxxabi.h>
@@ -10,13 +19,13 @@ using s32 = int;
 
 // The string_literal class holds a compile-time constant string and provides both substring and character finding operations.
 template <unsigned long long length>
-class								u_string_literal final {
+class								string_literal final {
     const char string[length];
 
 public:
     // Compile-time string construction from a string array and an integer_sequence to index it.
     template<unsigned long long... indexes>
-    constexpr u_string_literal		(const char(&raw_string)[sizeof...(indexes)], std::integer_sequence<unsigned long long, indexes...> index_sequence) : string{ raw_string[indexes]... } {
+    constexpr string_literal		(const char(&raw_string)[sizeof...(indexes)], std::integer_sequence<unsigned long long, indexes...> index_sequence) : string{ raw_string[indexes]... } {
         static_cast<void>(index_sequence);
     }
 
@@ -25,9 +34,9 @@ public:
 
     // Create a substring from this string by providing a template start position, length, and integer_sequence of indexes.
     template<unsigned long long substring_start, unsigned long long substring_length, unsigned long long... substring_indexes>
-    constexpr u_string_literal<substring_length + 1> substr(std::integer_sequence<unsigned long long, substring_indexes...> substring_index_sequence) const {
+    constexpr string_literal<substring_length + 1> substr(std::integer_sequence<unsigned long long, substring_indexes...> substring_index_sequence) const {
         static_cast<void>(substring_index_sequence);
-        return u_string_literal<substring_length + 1>({ this->string[substring_start + substring_indexes]..., '\0' }, std::make_integer_sequence<unsigned long long, substring_length + 1>{});
+        return string_literal<substring_length + 1>({ this->string[substring_start + substring_indexes]..., '\0' }, std::make_integer_sequence<unsigned long long, substring_length + 1>{});
     }
 
     // Search for a given character within this string.
@@ -181,11 +190,11 @@ private:
         return type_name_string.c_str();
 #elif defined(__FUNCSIG__) || defined(_MSC_VER)
         constexpr static const unsigned long long function_name_length = sizeof(__FUNCSIG__);
-        constexpr static const u_string_literal<function_name_length> function_name(__FUNCSIG__, std::make_integer_sequence<unsigned long long, function_name_length>{});
+        constexpr static const string_literal<function_name_length> function_name(__FUNCSIG__, std::make_integer_sequence<unsigned long long, function_name_length>{});
         constexpr static const unsigned long long type_name_start  = function_name.rfind('<') + 1;
         constexpr static const unsigned long long type_name_end    = function_name.rfind('>');
         constexpr static const unsigned long long type_name_length = type_name_end - type_name_start;
-        constexpr static const u_string_literal<type_name_length + 1> type_name_string = function_name.template substr<type_name_start, type_name_length>(std::make_integer_sequence<unsigned long long, type_name_length>{});
+        constexpr static const string_literal<type_name_length + 1> type_name_string = function_name.template substr<type_name_start, type_name_length>(std::make_integer_sequence<unsigned long long, type_name_length>{});
         return type_name_string.c_str();
 #else
 #error "Unsupported compiler."
@@ -221,7 +230,7 @@ struct token_holder {
 
     template<typename e_enum_type, u32... Indices>
     constexpr tokens make_tokens_helper(std::integer_sequence<u32, Indices...>) {
-        еokens ts = { make_name<e_enum_type, (e_enum_type)Indices>()... };
+        tokens ts = { make_name<e_enum_type, (e_enum_type)Indices>()... };
         ts[N] = {0, 0};
         return ts;
     }
@@ -233,19 +242,17 @@ struct token_holder {
 
     operator const token *() const { return tokens.unsafe_ptr(); }
     const token *data() const { return tokens.unsafe_ptr(); }
-    constexpr token_holder() : tokens{make_tokens<enum_type>()} {}
+    constexpr token_holder() : values{make_tokens<enum_type>()} {}
 
-    tokens tokens;
+    tokens values;
 };
 
-#ifdef TOKENUM_TEST
 enum test_enum { te_first, te_second, te_third, te_count };
 
 int main() {
     const token_holder<test_enum, te_first, te_count> test_tokens;
 
-    for (auto &s: test_tokens.tokens)
+    for (auto &s: test_tokens.values)
         std::cout << "{" << (s.name ? s.name : "null") << ", " << s.id << " }" << std::endl;
     return 0;
 }
-#endif
