@@ -238,6 +238,7 @@ struct token_holder {
     tokens values;
 };
 
+#ifdef TOKENNUM_TEST
 enum test_enum { te_first, te_second, te_third, te_count };
 
 int main() {
@@ -247,3 +248,4 @@ int main() {
         std::cout << "{" << (s.name ? s.name : "null") << ", " << s.id << " }" << std::endl;
     return 0;
 }
+#endif // TOKENNUM_TEST
