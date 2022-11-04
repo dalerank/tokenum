@@ -107,7 +107,7 @@ private:
         constexpr unsigned long long type_name_start  = function_name.rfind('=') + 2;
         constexpr unsigned long long type_name_end    = function_name.rfind(':') - 1;
         constexpr unsigned long long type_name_length = type_name_end - type_name_start;
-        constexpr u_string_literal<type_name_length + 1> type_name_string = function_name.template substr<type_name_start, type_name_length>(make_integer_sequence<unsigned long long, type_name_length>{});
+        constexpr u_string_literal<type_name_length + 1> type_name_string = function_name.template substr<type_name_start, type_name_length>(std::make_integer_sequence<unsigned long long, type_name_length>{});
         return type_name_string.c_str();
 #elif defined(__FUNCSIG__) || defined(_MSC_VER)
         constexpr static const unsigned long long function_name_length = sizeof(__FUNCSIG__);
@@ -115,7 +115,7 @@ private:
         constexpr static const unsigned long long type_name_start  = function_name.rfind('<') + 1;
         constexpr static const unsigned long long type_name_end    = function_name.rfind(':') - 1;
         constexpr static const unsigned long long type_name_length = type_name_end - type_name_start;
-        constexpr static const u_string_literal<type_name_length + 1> type_name_string = function_name.template substr<type_name_start, type_name_length>(gtl::make_integer_sequence<unsigned long long, type_name_length>{});
+        constexpr static const u_string_literal<type_name_length + 1> type_name_string = function_name.template substr<type_name_start, type_name_length>(std::make_integer_sequence<unsigned long long, type_name_length>{});
         return type_name_string.c_str();
 #else
 #error "Unsupported compiler."
@@ -150,7 +150,7 @@ private:
         constexpr static const unsigned long long type_name_start  = function_name.rfind(':') + 1;
         constexpr static const unsigned long long type_name_end    = function_name.rfind('>');
         constexpr static const unsigned long long type_name_length = type_name_end - type_name_start;
-        constexpr static const u_string_literal<type_name_length + 1> type_name_string = function_name.template substr<type_name_start, type_name_length>(detail::make_integer_sequence<unsigned long long, type_name_length>{});
+        constexpr static const u_string_literal<type_name_length + 1> type_name_string = function_name.template substr<type_name_start, type_name_length>(std::make_integer_sequence<unsigned long long, type_name_length>{});
         return type_name_string.c_str();
 #else
 #error "Unsupported compiler."
@@ -177,7 +177,7 @@ private:
         constexpr unsigned long long type_name_start  = function_name.rfind('=') + 2;
         constexpr unsigned long long type_name_end    = function_name_length - 2;
         constexpr unsigned long long type_name_length = type_name_end - type_name_start;
-        constexpr u_string_literal<type_name_length + 1> type_name_string = function_name.template substr<type_name_start, type_name_length>(detail::make_integer_sequence<unsigned long long, type_name_length>{});
+        constexpr u_string_literal<type_name_length + 1> type_name_string = function_name.template substr<type_name_start, type_name_length>(std::make_integer_sequence<unsigned long long, type_name_length>{});
         return type_name_string.c_str();
 #elif defined(__FUNCSIG__) || defined(_MSC_VER)
         constexpr static const unsigned long long function_name_length = sizeof(__FUNCSIG__);
@@ -231,8 +231,8 @@ struct token_holder {
         return make_tokens_helper<e_enum_type>( std::make_integer_sequence<u32, N>{});
     }
 
-    operator const token *() const { return tokens.unsafe_ptr(); }
-    const token *data() const { return tokens.unsafe_ptr(); }
+    operator const token *() const { return values.unsafe_ptr(); }
+    const token *data() const { return values.unsafe_ptr(); }
     constexpr token_holder() : values{make_tokens<enum_type>()} {}
 
     tokens values;
